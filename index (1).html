@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لماذا ضغطت؟ | Why Did You Click?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Tajawal:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  background:#070710;
+  color:#e8e8f4;
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh;
+  width:100%;
+  overflow-x:hidden;
+}
+
+.page{
+  max-width:700px;
+  margin:0 auto;
+  position:relative;
+  padding: 0 0 30px 0;
+}
+
+/* grid bg */
+.page::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,50,50,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,50,50,0.04) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+
+/* scanline */
+@keyframes scan{0%{top:-2px;}100%{top:100vh;}}
+.scan{
+  position:fixed;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,50,50,0.2),transparent);
+  animation:scan 5s linear infinite;
+  pointer-events:none;z-index:999;
+}
+
+/* ── HERO ── */
+.hero{
+  padding: clamp(24px,5vw,40px) clamp(18px,5vw,32px) clamp(20px,4vw,32px);
+  position:relative;border-bottom:1px solid #1a1a2e;overflow:hidden;z-index:1;
+}
+.hero::after{
+  content:'';position:absolute;top:-60px;left:-60px;
+  width:280px;height:280px;
+  background:radial-gradient(circle,rgba(220,30,30,0.15) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.blink{animation:blink 0.9s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+.alert-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(9px,2vw,11px);
+  letter-spacing:2px;
+  color:#ff6666;
+  border:1px solid rgba(255,80,80,0.5);
+  padding:5px 14px;border-radius:3px;margin-bottom:20px;
+  position:relative;z-index:1;
+}
+
+.title-en{
+  font-size:clamp(36px,10vw,56px);
+  font-weight:800;letter-spacing:-1.5px;line-height:1;
+  position:relative;z-index:1;
+}
+.title-en .red{color:#ff4444;}
+
+.title-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(18px,5vw,26px);
+  font-weight:900;color:#ff5555;
+  direction:rtl;margin-top:10px;
+  position:relative;z-index:1;
+}
+
+.divider{width:52px;height:3px;background:#ff3333;margin:20px 0;position:relative;z-index:1;}
+
+.desc-en{
+  font-size:clamp(12px,3vw,15px);color:#ddddee;
+  line-height:1.7;position:relative;z-index:1;
+}
+.desc-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(12px,3vw,15px);
+  color:#bbbbcc;direction:rtl;
+  margin-top:8px;line-height:1.8;
+  position:relative;z-index:1;
+}
+
+/* ── SECTIONS ── */
+.section-label{
+  display:flex;align-items:center;gap:10px;
+  padding:20px clamp(18px,5vw,32px) 10px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(9px,2vw,11px);
+  letter-spacing:2px;color:#aaaacc;
+  position:relative;z-index:1;
+}
+.section-label::after{content:'';flex:1;height:1px;background:#1a1a2e;}
+
+/* ── RISK CARDS ── */
+.risks{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  padding:4px clamp(18px,5vw,32px) 0;
+  position:relative;z-index:1;
+}
+
+@media(max-width:480px){
+  .risks{grid-template-columns:repeat(2,1fr);}
+}
+
+.risk-card{
+  background:#0e0e1e;border:1px solid #2a2a3e;border-radius:8px;
+  padding:clamp(12px,3vw,16px) 12px;text-align:center;
+  transition:border-color 0.2s;
+}
+.risk-card.top{border-color:rgba(255,70,70,0.4);}
+.risk-card:hover{border-color:rgba(255,80,80,0.5);}
+
+.risk-icon{font-size:clamp(20px,5vw,28px);margin-bottom:8px;}
+.risk-en{
+  font-size:clamp(11px,2.5vw,13px);
+  font-weight:700;color:#ddddee;margin-bottom:4px;
+}
+.risk-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(11px,2.5vw,13px);
+  color:#ccccee;direction:rtl;
+}
+
+/* ── FLOW ── */
+.flow{
+  padding:4px clamp(18px,5vw,32px) 0;
+  display:flex;align-items:center;gap:6px;
+  overflow-x:auto;position:relative;z-index:1;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.flow::-webkit-scrollbar{display:none;}
+
+.flow-step{
+  flex:0 0 auto;min-width:90px;
+  background:#0e0e1e;border:1px solid #1a1a2e;
+  border-radius:6px;padding:10px 8px;text-align:center;
+}
+.flow-step.danger{
+  background:rgba(255,30,30,0.08);
+  border-color:rgba(255,60,60,0.45);
+}
+.flow-icon{font-size:16px;margin-bottom:4px;}
+.flow-en{font-size:10px;font-weight:700;color:#ccccee;line-height:1.3;}
+.flow-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:10px;color:#bbbbdd;
+  direction:rtl;margin-top:2px;
+}
+.flow-sep{color:#ff3333;font-size:14px;flex-shrink:0;}
+
+/* ── PROTECT ── */
+.protect{
+  padding:4px clamp(18px,5vw,32px) 0;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;position:relative;z-index:1;
+}
+
+@media(max-width:480px){
+  .protect{grid-template-columns:1fr;}
+}
+
+.protect-item{
+  background:#0a0a16;border:1px solid #181828;
+  border-radius:8px;padding:14px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.protect-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(18px,4vw,24px);
+  font-weight:600;color:rgba(255,80,80,0.3);
+  line-height:1;flex-shrink:0;width:28px;
+}
+.protect-en{
+  font-size:clamp(11px,2.5vw,13px);
+  font-weight:700;color:#ddddee;
+  margin-bottom:4px;line-height:1.4;
+}
+.protect-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(11px,2.5vw,13px);
+  color:#ccccee;direction:rtl;line-height:1.6;
+}
+
+/* ── CTA ── */
+.cta{
+  margin:20px clamp(18px,5vw,32px);
+  background:linear-gradient(135deg,#130a0a,#1d0a0a);
+  border:1px solid rgba(255,60,60,0.4);
+  border-radius:10px;
+  padding:clamp(16px,4vw,22px);
+  display:flex;align-items:center;gap:18px;
+  position:relative;overflow:hidden;z-index:1;
+}
+.cta::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:120px;height:120px;
+  background:radial-gradient(circle,rgba(255,50,50,0.12) 0%,transparent 70%);
+}
+.cta-icon{font-size:clamp(28px,7vw,42px);flex-shrink:0;}
+.cta-en{
+  font-size:clamp(16px,4vw,24px);
+  font-weight:800;color:#ff5555;
+  letter-spacing:-0.5px;
+}
+.cta-ar{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(14px,3.5vw,18px);
+  color:#cc3333;direction:rtl;
+  margin-top:4px;font-weight:700;
+}
+
+/* ── FOOTER ── */
+.footer{
+  background:#050508;border-top:1px solid #111;
+  padding:14px clamp(18px,5vw,32px);
+  display:flex;align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;gap:6px;
+  position:relative;z-index:1;
+}
+.footer-l{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(9px,2vw,11px);color:#8888aa;
+}
+.footer-l span{color:#ff5555;}
+.footer-r{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(9px,2vw,11px);
+  color:#8888aa;direction:rtl;
+}
+</style>
+</head>
+<body>
+<div class="scan"></div>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="alert-tag"><span class="blink">■</span> SECURITY AWARENESS &nbsp;/&nbsp; توعية أمنية</div>
+    <div class="title-en">Why Did<br>You <span class="red">Click?</span></div>
+    <div class="title-ar">لماذا ضغطت على الرابط؟</div>
+    <div class="divider"></div>
+    <div class="desc-en">You just scanned an unknown QR code — or clicked an unknown link. In a real attack, that single action could hand an attacker full access to your device and data.</div>
+    <div class="desc-ar">للتو مسحت كود QR مجهول — أو ضغطت رابطاً لا تعرف وجهته. في هجوم حقيقي، هذا يكفي لمنح المهاجم وصولاً كاملاً لجهازك وبياناتك.</div>
+  </div>
+
+  <!-- WHAT COULD HAPPEN -->
+  <div class="section-label">WHAT COULD HAVE HAPPENED &nbsp;/&nbsp; ماذا كان يمكن أن يحدث</div>
+  <div class="risks">
+    <div class="risk-card top">
+      <div class="risk-icon">🔑</div>
+      <div class="risk-en">Session Hijacking</div>
+      <div class="risk-ar">سرقة جلسة الحساب</div>
+    </div>
+    <div class="risk-card top">
+      <div class="risk-icon">📂</div>
+      <div class="risk-en">Data Theft</div>
+      <div class="risk-ar">سرقة بياناتك الشخصية</div>
+    </div>
+    <div class="risk-card top">
+      <div class="risk-icon">🦠</div>
+      <div class="risk-en">Malware Install</div>
+      <div class="risk-ar">تثبيت برامج خبيثة</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">💳</div>
+      <div class="risk-en">Financial Fraud</div>
+      <div class="risk-ar">احتيال مالي</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">📷</div>
+      <div class="risk-en">Camera & Mic Access</div>
+      <div class="risk-ar">الوصول للكاميرا والميك</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">🔒</div>
+      <div class="risk-en">Ransomware Lock</div>
+      <div class="risk-ar">تشفير وتأمين جهازك</div>
+    </div>
+  </div>
+
+  <!-- ATTACK FLOW -->
+  <div class="section-label" style="margin-top:14px;">ATTACK FLOW &nbsp;/&nbsp; مراحل الهجوم</div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-icon">🔗</div>
+      <div class="flow-en">Craft Link</div>
+      <div class="flow-ar">صياغة الرابط</div>
+    </div>
+    <div class="flow-sep">→</div>
+    <div class="flow-step">
+      <div class="flow-icon">📨</div>
+      <div class="flow-en">Send to Victim</div>
+      <div class="flow-ar">يصل إليك</div>
+    </div>
+    <div class="flow-sep">→</div>
+    <div class="flow-step danger">
+      <div class="flow-icon">👆</div>
+      <div class="flow-en">You Click</div>
+      <div class="flow-ar">تضغط ← أنت هنا</div>
+    </div>
+    <div class="flow-sep">→</div>
+    <div class="flow-step danger">
+      <div class="flow-icon">💀</div>
+      <div class="flow-en">System Owned</div>
+      <div class="flow-ar">الاختراق</div>
+    </div>
+    <div class="flow-sep">→</div>
+    <div class="flow-step">
+      <div class="flow-icon">🛡️</div>
+      <div class="flow-en">Detect & Defend</div>
+      <div class="flow-ar">الكشف والدفاع</div>
+    </div>
+  </div>
+
+  <!-- PROTECT -->
+  <div class="section-label" style="margin-top:14px;">HOW TO PROTECT YOURSELF &nbsp;/&nbsp; كيف تحمي نفسك</div>
+  <div class="protect">
+    <div class="protect-item">
+      <div class="protect-num">01</div>
+      <div>
+        <div class="protect-en">Check the URL before clicking — even if it looks official</div>
+        <div class="protect-ar">افحص الرابط قبل الضغط حتى لو يبدو رسمياً</div>
+      </div>
+    </div>
+    <div class="protect-item">
+      <div class="protect-num">02</div>
+      <div>
+        <div class="protect-en">Never scan QR codes from unknown sources</div>
+        <div class="protect-ar">لا تمسح QR من مصادر مجهولة أو غير موثوقة</div>
+      </div>
+    </div>
+    <div class="protect-item">
+      <div class="protect-num">03</div>
+      <div>
+        <div class="protect-en">Urgency is a red flag — attackers create panic on purpose</div>
+        <div class="protect-ar">الاستعجال علامة خطر — المهاجم يصنع الذعر عن قصد</div>
+      </div>
+    </div>
+    <div class="protect-item">
+      <div class="protect-num">04</div>
+      <div>
+        <div class="protect-en">Contact the organization directly through their official site</div>
+        <div class="protect-ar">تواصل مع الجهة مباشرة عبر موقعها الرسمي فقط</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+
+    <div>
+      <div class="cta-en">Think Before You Click.</div>
+      <div class="cta-ar">فكّر قبل أن تضغط.</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-l"><span>Malicious Link Attack</span> · Stay Alert. Stay Safe.</div>
+    <div class="footer-r">كن يقظاً · ابقَ بأمان</div>
+  </div>
+
+</div>
+</body>
+</html>
